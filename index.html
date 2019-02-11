@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>pixi</title>
+  <script src="./pixi/pixi.min.js"></script>
+</head>
+<body>
+  <script type="text/javascript">
+    let type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type);
+
+    //Create a Pixi Application
+    let app = new PIXI.Application({width: window.innerWidth, height: window.innerHeight});
+    //Add the canvas that Pixi automatically created for you to the HTML document
+    document.body.appendChild(app.view);
+    
+    PIXI.loader
+      .add("./img/icon.png")
+      .load(setup);
+
+    function setup() {
+      let sprite = new PIXI.Sprite(
+        PIXI.loader.resources["./img/icon.png"].texture
+      );
+      sprite.anchor.set(0,1);
+
+      sprite.y = window.innerHeight;
+
+      app.stage.addChild(sprite);
+    }
+  </script>
+</body>
+</html>
