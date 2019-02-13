@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>pixi</title>
+  <link rel="stylesheet" type="text/css" href="./index.css">
   <script src="./pixi/pixi.min.js"></script>
 </head>
 <body>
@@ -20,18 +21,529 @@
     document.body.appendChild(app.view);
     
     PIXI.loader
-      .add("./img/icon.png")
+      .add("./img/clover1.jpeg")
+      .add("./img/clover2.jpeg")
+      .add("./img/clover3.jpeg")
+      .add("./img/clover4.jpeg")
+      .add("./img/clover5.jpeg")
+      .add("./img/clover6.jpeg")
+      .add("./img/clover7.jpeg")
+      .add("./img/clover8.jpeg")
+      .add("./img/clover9.jpeg")
+      .add("./img/clover10.jpeg")
+      .add("./img/clover11.jpeg")
+      .add("./img/clover12.jpeg")
+      .add("./img/clover13.jpeg")
+      .add("./img/heart1.jpeg")
+      .add("./img/heart2.jpeg")
+      .add("./img/heart3.jpeg")
+      .add("./img/heart4.jpeg")
+      .add("./img/heart5.jpeg")
+      .add("./img/heart6.jpeg")
+      .add("./img/heart7.jpeg")
+      .add("./img/heart8.jpeg")
+      .add("./img/heart9.jpeg")
+      .add("./img/heart10.jpeg")
+      .add("./img/heart11.jpeg")
+      .add("./img/heart12.jpeg")
+      .add("./img/heart13.jpeg")
+      .add("./img/pike1.jpeg")
+      .add("./img/pike2.jpeg")
+      .add("./img/pike3.jpeg")
+      .add("./img/pike4.jpeg")
+      .add("./img/pike5.jpeg")
+      .add("./img/pike6.jpeg")
+      .add("./img/pike7.jpeg")
+      .add("./img/pike8.jpeg")
+      .add("./img/pike9.jpeg")
+      .add("./img/pike10.jpeg")
+      .add("./img/pike11.jpeg")
+      .add("./img/pike12.jpeg")
+      .add("./img/pike13.jpeg")
+      .add("./img/tile1.jpeg")
+      .add("./img/tile2.jpeg")
+      .add("./img/tile3.jpeg")
+      .add("./img/tile4.jpeg")
+      .add("./img/tile5.jpeg")
+      .add("./img/tile6.jpeg")
+      .add("./img/tile7.jpeg")
+      .add("./img/tile8.jpeg")
+      .add("./img/tile9.jpeg")
+      .add("./img/tile10.jpeg")
+      .add("./img/tile11.jpeg")
+      .add("./img/tile12.jpeg")
+      .add("./img/tile13.jpeg")
       .load(setup);
 
-    function setup() {
-      let sprite = new PIXI.Sprite(
-        PIXI.loader.resources["./img/icon.png"].texture
+    let clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
+      heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
+      pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
+      tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13;
+
+    function set_card_sprites() {
+      clover1 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover1.jpeg"].texture
       );
-      sprite.anchor.set(0,1);
+      //sprite.anchor.set(0,1);
 
-      sprite.y = window.innerHeight;
+      clover1.width = window.innerWidth * 0.2;
+      clover1.height = window.innerHeight * 0.08;
 
-      app.stage.addChild(sprite);
+
+      clover2 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover2.jpeg"].texture
+      );
+
+      clover2.width = window.innerWidth * 0.2;
+      clover2.height = window.innerHeight * 0.08;
+
+
+      clover3 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover3.jpeg"].texture
+      );
+
+      clover3.width = window.innerWidth * 0.2;
+      clover3.height = window.innerHeight * 0.08;
+
+
+      clover4 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover4.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      clover4.width = window.innerWidth * 0.2;
+      clover4.height = window.innerHeight * 0.08;
+
+
+      clover5 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover5.jpeg"].texture
+      );
+
+      clover5.width = window.innerWidth * 0.2;
+      clover5.height = window.innerHeight * 0.08;
+
+
+      clover6 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover6.jpeg"].texture
+      );
+
+      clover6.width = window.innerWidth * 0.2;
+      clover6.height = window.innerHeight * 0.08;
+
+
+      clover7 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover7.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      clover7.width = window.innerWidth * 0.2;
+      clover7.height = window.innerHeight * 0.08;
+
+
+      clover8 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover8.jpeg"].texture
+      );
+
+      clover8.width = window.innerWidth * 0.2;
+      clover8.height = window.innerHeight * 0.08;
+
+
+      clover9 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover9.jpeg"].texture
+      );
+
+      clover9.width = window.innerWidth * 0.2;
+      clover9.height = window.innerHeight * 0.08;
+
+
+      clover10 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover10.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      clover10.width = window.innerWidth * 0.2;
+      clover10.height = window.innerHeight * 0.08;
+
+
+      clover11 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover11.jpeg"].texture
+      );
+
+      clover11.width = window.innerWidth * 0.2;
+      clover11.height = window.innerHeight * 0.08;
+
+
+      clover12 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover12.jpeg"].texture
+      );
+
+      clover12.width = window.innerWidth * 0.2;
+      clover12.height = window.innerHeight * 0.08; 
+
+
+      clover13 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/clover13.jpeg"].texture
+      );
+
+      clover13.width = window.innerWidth * 0.2;
+      clover13.height = window.innerHeight * 0.08;
+
+
+      heart1 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart1.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      heart1.width = window.innerWidth * 0.2;
+      heart1.height = window.innerHeight * 0.08;
+
+
+      heart2 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart2.jpeg"].texture
+      );
+
+      heart2.width = window.innerWidth * 0.2;
+      heart2.height = window.innerHeight * 0.08;
+
+
+      heart3 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart3.jpeg"].texture
+      );
+
+      heart3.width = window.innerWidth * 0.2;
+      heart3.height = window.innerHeight * 0.08;
+
+
+      heart4 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart4.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      heart4.width = window.innerWidth * 0.2;
+      heart4.height = window.innerHeight * 0.08;
+
+
+      heart5 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart5.jpeg"].texture
+      );
+
+      heart5.width = window.innerWidth * 0.2;
+      heart5.height = window.innerHeight * 0.08;
+
+
+      heart6 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart6.jpeg"].texture
+      );
+
+      heart6.width = window.innerWidth * 0.2;
+      heart6.height = window.innerHeight * 0.08;
+
+
+      heart7 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart7.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      heart7.width = window.innerWidth * 0.2;
+      heart7.height = window.innerHeight * 0.08;
+
+
+      heart8 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart8.jpeg"].texture
+      );
+
+      heart8.width = window.innerWidth * 0.2;
+      heart8.height = window.innerHeight * 0.08;
+
+
+      heart9 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart9.jpeg"].texture
+      );
+
+      heart9.width = window.innerWidth * 0.2;
+      heart9.height = window.innerHeight * 0.08;
+
+
+      heart10 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart10.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      heart10.width = window.innerWidth * 0.2;
+      heart10.height = window.innerHeight * 0.08;
+
+
+      heart11 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart11.jpeg"].texture
+      );
+
+      heart11.width = window.innerWidth * 0.2;
+      heart11.height = window.innerHeight * 0.08;
+
+
+      heart12 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart12.jpeg"].texture
+      );
+
+      heart12.width = window.innerWidth * 0.2;
+      heart12.height = window.innerHeight * 0.08; 
+
+
+      heart13 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/heart13.jpeg"].texture
+      );
+
+      heart13.width = window.innerWidth * 0.2;
+      heart13.height = window.innerHeight * 0.08;
+
+
+      pike1 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike1.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      pike1.width = window.innerWidth * 0.2;
+      pike1.height = window.innerHeight * 0.08;
+
+
+      pike2 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike2.jpeg"].texture
+      );
+
+      pike2.width = window.innerWidth * 0.2;
+      pike2.height = window.innerHeight * 0.08;
+
+
+      pike3 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike3.jpeg"].texture
+      );
+
+      pike3.width = window.innerWidth * 0.2;
+      pike3.height = window.innerHeight * 0.08;
+
+
+      pike4 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike4.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      pike4.width = window.innerWidth * 0.2;
+      pike4.height = window.innerHeight * 0.08;
+
+
+      pike5 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike5.jpeg"].texture
+      );
+
+      pike5.width = window.innerWidth * 0.2;
+      pike5.height = window.innerHeight * 0.08;
+
+
+      pike6 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike6.jpeg"].texture
+      );
+
+      pike6.width = window.innerWidth * 0.2;
+      pike6.height = window.innerHeight * 0.08;
+
+
+      pike7 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike7.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      pike7.width = window.innerWidth * 0.2;
+      pike7.height = window.innerHeight * 0.08;
+
+
+      pike8 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike8.jpeg"].texture
+      );
+
+      pike8.width = window.innerWidth * 0.2;
+      pike8.height = window.innerHeight * 0.08;
+
+
+      pike9 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike9.jpeg"].texture
+      );
+
+      pike9.width = window.innerWidth * 0.2;
+      pike9.height = window.innerHeight * 0.08;
+
+
+      pike10 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike10.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      pike10.width = window.innerWidth * 0.2;
+      pike10.height = window.innerHeight * 0.08;
+
+
+      pike11 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike11.jpeg"].texture
+      );
+
+      pike11.width = window.innerWidth * 0.2;
+      pike11.height = window.innerHeight * 0.08;
+
+
+      pike12 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike12.jpeg"].texture
+      );
+
+      pike12.width = window.innerWidth * 0.2;
+      pike12.height = window.innerHeight * 0.08; 
+
+
+      pike13 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/pike13.jpeg"].texture
+      );
+
+      pike13.width = window.innerWidth * 0.2;
+      pike13.height = window.innerHeight * 0.08;
+
+
+      tile1 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile1.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      tile1.width = window.innerWidth * 0.2;
+      tile1.height = window.innerHeight * 0.08;
+
+
+      tile2 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile2.jpeg"].texture
+      );
+
+      tile2.width = window.innerWidth * 0.2;
+      tile2.height = window.innerHeight * 0.08;
+
+
+      tile3 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile3.jpeg"].texture
+      );
+
+      tile3.width = window.innerWidth * 0.2;
+      tile3.height = window.innerHeight * 0.08;
+
+
+      tile4 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile4.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      tile4.width = window.innerWidth * 0.2;
+      tile4.height = window.innerHeight * 0.08;
+
+
+      tile5 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile5.jpeg"].texture
+      );
+
+      tile5.width = window.innerWidth * 0.2;
+      tile5.height = window.innerHeight * 0.08;
+
+
+      tile6 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile6.jpeg"].texture
+      );
+
+      tile6.width = window.innerWidth * 0.2;
+      tile6.height = window.innerHeight * 0.08;
+
+
+      tile7 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile7.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      tile7.width = window.innerWidth * 0.2;
+      tile7.height = window.innerHeight * 0.08;
+
+
+      tile8 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile8.jpeg"].texture
+      );
+
+      tile8.width = window.innerWidth * 0.2;
+      tile8.height = window.innerHeight * 0.08;
+
+
+      tile9 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile9.jpeg"].texture
+      );
+
+      tile9.width = window.innerWidth * 0.2;
+      tile9.height = window.innerHeight * 0.08;
+
+
+      tile10 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile10.jpeg"].texture
+      );
+      //sprite.anchor.set(0,1);
+
+      tile10.width = window.innerWidth * 0.2;
+      tile10.height = window.innerHeight * 0.08;
+
+
+      tile11 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile11.jpeg"].texture
+      );
+
+      tile11.width = window.innerWidth * 0.2;
+      tile11.height = window.innerHeight * 0.08;
+
+
+      tile12 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile12.jpeg"].texture
+      );
+
+      tile12.width = window.innerWidth * 0.2;
+      tile12.height = window.innerHeight * 0.08; 
+
+
+      tile13 = new PIXI.Sprite(
+        PIXI.loader.resources["./img/tile13.jpeg"].texture
+      );
+
+      tile13.width = window.innerWidth * 0.2;
+      tile13.height = window.innerHeight * 0.08;
+    }
+
+    function setup() {
+      set_card_sprites();
+
+      const cards = [clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
+      heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
+      pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
+      tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
+      
+      let beginning_card = [];
+
+      while(beginning_card.length < 24) {
+        let random = Math.floor(Math.random() * 52);
+        if(!beginning_card.includes(random)) {
+          beginning_card.push(random);
+        }  
+      }
+
+      console.log(beginning_card)
+
+      for(let i = 0; i < 6; i++) {
+        if(i < 3) {
+          cards[beginning_card[i]].x = ((window.innerWidth - 3 * cards[beginning_card[i]].width) / 4) * (i + 1) + i * cards[beginning_card[i]].width;
+          cards[beginning_card[i]].y = window.innerHeight - 2 * cards[beginning_card[i]].height - 120;
+          app.stage.addChild(cards[beginning_card[i]]);
+        } else {
+          cards[beginning_card[i]].x = ((window.innerWidth - 3 * cards[beginning_card[i]].width) / 4) * (i - 2) + (i - 3) * cards[beginning_card[i]].width;
+          cards[beginning_card[i]].y = window.innerHeight - cards[beginning_card[i]].height - 60;
+          app.stage.addChild(cards[beginning_card[i]]);
+        }
+      }
+
     }
   </script>
 </body>
