@@ -580,8 +580,8 @@
       // 左邊玩家
       function show_left_card() {
         left_card.forEach((card, i) => {
-          cards[card].width = cards[card].width * 0.5;
-          cards[card].height = cards[card].height * 0.5;
+          cards[card].width = ORIGINAL_WIDTH * 0.5;
+          cards[card].height =  ORIGINAL_HEIGHT * 0.5;
 
           if(i < 2) {
             cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 1) + i * cards[card].width;
@@ -605,8 +605,8 @@
       // 上方玩家
       function show_top_card() {
         top_card.forEach((card, i) => {
-          cards[card].width = cards[card].width * 0.5;
-          cards[card].height = cards[card].height * 0.5;
+          cards[card].width = ORIGINAL_WIDTH * 0.5;
+          cards[card].height =  ORIGINAL_HEIGHT * 0.5;
           
           if(i < 3) {
             cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * i + i * cards[card].width + 300;
@@ -626,8 +626,8 @@
       // 右邊玩家
       function show_right_card() {
         right_card.forEach((card, i) => {
-          cards[card].width = cards[card].width * 0.5;
-          cards[card].height = cards[card].height * 0.5;
+          cards[card].width = ORIGINAL_WIDTH * 0.5;
+          cards[card].height =  ORIGINAL_HEIGHT * 0.5;
 
           if(i < 2) {
             cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 12) + (i + 2) * cards[card].width;
@@ -673,11 +673,61 @@
 
 
       function drawCard() {
-        my_card.push(beginning_card[on_top_of_the_cards]);
+        const players_cards = [my_card, left_card, top_card, right_card];
+        players_cards[currentPlayer % 4].push(beginning_card[on_top_of_the_cards]);
         on_top_of_the_cards++;
         currentPlayer++;
         round();
         show_my_card();
+      }
+
+      function autoMatch() {
+        const players_cards = [left_card, top_card, right_card];
+        let my_match = [];
+        let match_middle = [];
+
+        players_cards[currentPlayer % 4 - 1].forEach((card, i) => {
+          if(card % 13 > 8) {
+            middle_card.forEach((middle, middle_index) => {
+              if(card % 13 === middle % 13) {
+                if(!my_match.includes(i)) {
+                  my_match.push(i);
+                  match_middle.push(middle_index);
+                } 
+              }
+            });
+          } else {
+            middle_card.forEach((middle, middle_index) => {
+              if(card % 13 + middle % 13 === 8) {
+                if(!my_match.includes(i)) {
+                  my_match.push(i);
+                  match_middle.push(middle_index);
+                } 
+              }
+            });
+          }
+
+          if(i === players_cards[currentPlayer % 4 - 1].length - 1 ) {
+            if(my_match.length !== 0) {
+              app.stage.removeChild(event.target);
+              app.stage.removeChild(cards[players_cards[currentPlayer % 4 - 1][my_match[0]]]);
+
+              middle_card.splice(match_middle[0], 1, beginning_card[on_top_of_the_cards]);
+              players_cards[currentPlayer % 4 - 1].splice(my_match[0], 1);
+              on_top_of_the_cards++;
+              
+              currentPlayer++;
+              match++;
+              round();
+              show_middle_card();
+              show_left_card();
+              show_top_card();
+              show_right_card();
+            } else {
+              drawCard();
+            }
+          } 
+        });
       }
 
 
@@ -690,13 +740,14 @@
             }
 
             if(i === my_card.length - 1) {
+              app.stage.removeChild(event.target);
+              app.stage.removeChild(cards[my_card[my_match[0]]]);
+
               let middleCardIndex = middle_card.indexOf(index);
               middle_card.splice(middleCardIndex, 1, beginning_card[on_top_of_the_cards]);
               my_card.splice(my_match[0], 1);
               on_top_of_the_cards++;
 
-              app.stage.removeChild(event.target);
-              app.stage.removeChild(cards[my_card[my_match[0]]]);
               currentPlayer++;
               match++;
               round();
@@ -711,13 +762,14 @@
             }
 
             if(i === my_card.length - 1) {
+              app.stage.removeChild(event.target);
+              app.stage.removeChild(cards[my_card[my_match[0]]]);
+
               let middleCardIndex = middle_card.indexOf(index);
               middle_card.splice(middleCardIndex, 1, beginning_card[on_top_of_the_cards]);
               my_card.splice(my_match[0], 1);
               on_top_of_the_cards++;
-
-              app.stage.removeChild(event.target);
-              app.stage.removeChild(cards[my_card[my_match[0]]]);
+              
               currentPlayer++;
               match++;
               round();
@@ -728,8 +780,9 @@
         }
       }
 
-      function round() {
-        if(currentPlayer === 0) {
+      function round() {console.log(match);
+        console.log('p:'+currentPlayer)
+        if(currentPlayer % 4 === 0) {
           draw.interactive = true;
           draw.buttonMode = true;
           draw.on('pointerdown', drawCard);
@@ -747,6 +800,8 @@
             cards[middle].interactive = false;
             cards[middle].buttonMode = false;
           });
+
+          autoMatch();
         }
       }
 
