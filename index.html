@@ -21,6 +21,7 @@
     document.body.appendChild(app.view);
     
     PIXI.loader
+      .add("./img/drawCard.jpeg")
       .add("./img/clover1.jpeg")
       .add("./img/clover2.jpeg")
       .add("./img/clover3.jpeg")
@@ -516,12 +517,23 @@
     function setup() {
       set_card_sprites();
 
+      let draw = new PIXI.Sprite(
+        PIXI.loader.resources["./img/drawCard.jpeg"].texture
+      );
+
+      draw.width = window.innerWidth * 0.3;
+      draw.height = window.innerHeight * 0.05;
+      draw.x = window.innerWidth / 2 - draw.width / 2;
+      draw.y = window.innerHeight / 2 + 2.5 * draw.height;
+      app.stage.addChild(draw);
+
       const cards = [clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
       heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
       pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
       tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
       
       let beginning_card = [];
+
 
       while(beginning_card.length < 52) {
         let random = Math.floor(Math.random() * 52);
@@ -530,92 +542,226 @@
         }  
       }
 
+      let my_card = beginning_card.slice(0,6);
+      let left_card = beginning_card.slice(6,12);
+      let top_card = beginning_card.slice(12,18);
+      let right_card = beginning_card.slice(18,24);
+      let middle_card = beginning_card.slice(24,28);
+      let on_top_of_the_cards = 28;
+
+      const ORIGINAL_WIDTH = window.innerWidth * 0.2;
+      const ORIGINAL_HEIGHT = window.innerHeight * 0.08;
+
       console.log(beginning_card)
+      console.log(my_card)
+      console.log(left_card)
+      console.log(right_card)
+      console.log(top_card)
+      console.log(middle_card)
 
       // 自己的牌
-      for(let i = 0; i < 6; i++) {
-        if(i < 3) {
-          cards[beginning_card[i]].x = ((window.innerWidth - 3 * cards[beginning_card[i]].width) / 4) * (i + 1) + i * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight - 2 * cards[beginning_card[i]].height - 120;
-          app.stage.addChild(cards[beginning_card[i]]);
-        } else {
-          cards[beginning_card[i]].x = ((window.innerWidth - 3 * cards[beginning_card[i]].width) / 4) * (i - 2) + (i - 3) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight - cards[beginning_card[i]].height - 60;
-          app.stage.addChild(cards[beginning_card[i]]);
-        }
+      function show_my_card() {console.log(my_card)
+        my_card.forEach((card, i) => {
+          if(i < 3) {
+            cards[card].x = ((window.innerWidth - 3 * ORIGINAL_WIDTH) / 4) * (i + 1) + i * ORIGINAL_WIDTH;
+            cards[card].y = window.innerHeight - 2 * ORIGINAL_HEIGHT - 120;
+            app.stage.addChild(cards[card]);
+          } else {
+            cards[card].x = ((window.innerWidth - 3 * ORIGINAL_WIDTH) / 4) * (i - 2) + (i - 3) * ORIGINAL_WIDTH;
+            cards[card].y = window.innerHeight - ORIGINAL_HEIGHT - 60;
+            app.stage.addChild(cards[card]);
+          }
+        });
       }
+
+      show_my_card();
+
 
       // 左邊玩家
-      for(let i = 6; i < 12; i++) {
-        cards[beginning_card[i]].width = cards[beginning_card[i]].width * 0.5;
-        cards[beginning_card[i]].height = cards[beginning_card[i]].height * 0.5;
-        
-        if(i < 8) {
-          cards[beginning_card[i]].x = ((window.innerWidth - 4 * cards[beginning_card[i]].width) / 14) * (i - 5) + (i - 6) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight / 2 - 2 * cards[beginning_card[i]].height;
-          app.stage.addChild(cards[beginning_card[i]]);
-        } else if(i < 10) {
-          cards[beginning_card[i]].x = ((window.innerWidth - 4 * cards[beginning_card[i]].width) / 14) * (i - 7) + (i - 8) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight / 2 - 0.5 * cards[beginning_card[i]].height;
-          app.stage.addChild(cards[beginning_card[i]]);
-        } else {
-          cards[beginning_card[i]].x = ((window.innerWidth - 4 * cards[beginning_card[i]].width) / 14) * (i - 9) + (i - 10) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight / 2 + 1 * cards[beginning_card[i]].height;
-          app.stage.addChild(cards[beginning_card[i]]);
-        }
+      function show_left_card() {
+        left_card.forEach((card, i) => {
+          cards[card].width = cards[card].width * 0.5;
+          cards[card].height = cards[card].height * 0.5;
+
+          if(i < 2) {
+            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 1) + i * cards[card].width;
+            cards[card].y = window.innerHeight / 2 - 2 * cards[card].height;
+            app.stage.addChild(cards[card]);
+          } else if(i < 4) {
+            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i - 1) + (i - 2) * cards[card].width;
+            cards[card].y = window.innerHeight / 2 - 0.5 * cards[card].height;
+            app.stage.addChild(cards[card]);
+          } else {
+            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i - 3) + (i - 4) * cards[card].width;
+            cards[card].y = window.innerHeight / 2 + 1 * cards[card].height;
+            app.stage.addChild(cards[card]);
+          }
+        });
       }
+
+      show_left_card();
+      
 
       // 上方玩家
-      for(let i = 12; i < 18; i++) {
-        cards[beginning_card[i]].width = cards[beginning_card[i]].width * 0.5;
-        cards[beginning_card[i]].height = cards[beginning_card[i]].height * 0.5;
-        
-        if(i < 15) {
-          cards[beginning_card[i]].x = ((window.innerWidth - 600 - 3 * cards[beginning_card[i]].width) / 2) * (i - 12) + (i - 12) * cards[beginning_card[i]].width + 300;
-          cards[beginning_card[i]].y = 30;
-          app.stage.addChild(cards[beginning_card[i]]);
-        } else {
-          cards[beginning_card[i]].x = ((window.innerWidth - 600 - 3 * cards[beginning_card[i]].width) / 2) * (i - 15) + (i - 15) * cards[beginning_card[i]].width + 300;
-          cards[beginning_card[i]].y = cards[beginning_card[i]].height + 30 + 30;
-          app.stage.addChild(cards[beginning_card[i]]);
-        }
+      function show_top_card() {
+        top_card.forEach((card, i) => {
+          cards[card].width = cards[card].width * 0.5;
+          cards[card].height = cards[card].height * 0.5;
+          
+          if(i < 3) {
+            cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * i + i * cards[card].width + 300;
+            cards[card].y = 30;
+            app.stage.addChild(cards[card]);
+          } else {
+            cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * (i - 3) + (i - 3) * cards[card].width + 300;
+            cards[card].y = cards[card].height + 30 + 30;
+            app.stage.addChild(cards[card]);
+          }
+        });
       }
+
+      show_top_card();
+
 
       // 右邊玩家
-      for(let i = 18; i < 24; i++) {
-        cards[beginning_card[i]].width = cards[beginning_card[i]].width * 0.5;
-        cards[beginning_card[i]].height = cards[beginning_card[i]].height * 0.5;
-        
-        if(i < 20) {
-          cards[beginning_card[i]].x = ((window.innerWidth - 4 * cards[beginning_card[i]].width) / 14) * (i - 6) + (i - 16) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight / 2 - 2 * cards[beginning_card[i]].height;
-          app.stage.addChild(cards[beginning_card[i]]);
-        } else if(i < 22) {
-          cards[beginning_card[i]].x = ((window.innerWidth - 4 * cards[beginning_card[i]].width) / 14) * (i - 8) + (i - 18) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight / 2 - 0.5 * cards[beginning_card[i]].height;
-          app.stage.addChild(cards[beginning_card[i]]);
+      function show_right_card() {
+        right_card.forEach((card, i) => {
+          cards[card].width = cards[card].width * 0.5;
+          cards[card].height = cards[card].height * 0.5;
+
+          if(i < 2) {
+            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 12) + (i + 2) * cards[card].width;
+            cards[card].y = window.innerHeight / 2 - 2 * cards[card].height;
+            app.stage.addChild(cards[card]);
+          } else if(i < 4) {
+            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 10) + i * cards[card].width;
+            cards[card].y = window.innerHeight / 2 - 0.5 * cards[card].height;
+            app.stage.addChild(cards[card]);
+          } else {
+            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 8) + (i - 2) * cards[card].width;
+            cards[card].y = window.innerHeight / 2 + 1 * cards[card].height;
+            app.stage.addChild(cards[card]);
+          }
+        });
+      }
+
+      show_right_card();
+
+
+      //中間翻牌
+      function show_middle_card() {console.log(middle_card)
+        middle_card.forEach((card, i) => {
+          cards[card].tint = 0.3 * 0xFFFFFF;
+
+          cards[card].width = ORIGINAL_WIDTH * 0.5;
+          cards[card].height = ORIGINAL_HEIGHT * 0.5;
+
+          if(i < 2) {
+            cards[card].x = (window.innerWidth - 1000 - 2 * cards[card].width) * i + i * cards[card].width + 500;
+            cards[card].y = window.innerHeight / 2 - cards[card].height - 15;
+
+            app.stage.addChild(cards[card]);
+          } else {
+            cards[card].x = (window.innerWidth - 1000 - 2 * cards[card].width) * (i - 2) + (i - 2) * cards[card].width + 500;
+            cards[card].y = window.innerHeight / 2 + 15;
+            app.stage.addChild(cards[card]);
+          }
+        });
+      }
+
+      show_middle_card();
+
+
+      function drawCard() {
+        my_card.push(beginning_card[on_top_of_the_cards]);
+        on_top_of_the_cards++;
+        currentPlayer++;
+        round();
+        show_my_card();
+      }
+
+
+      function onClick (event, index) {
+        let my_match = [];
+        if(index % 13 > 8) {
+          my_card.forEach((myCard, i) => {
+            if(myCard % 13 === index % 13) {
+              my_match.push(i);
+            }
+
+            if(i === my_card.length - 1) {
+              let middleCardIndex = middle_card.indexOf(index);
+              middle_card.splice(middleCardIndex, 1, beginning_card[on_top_of_the_cards]);
+              my_card.splice(my_match[0], 1);
+              on_top_of_the_cards++;
+
+              app.stage.removeChild(event.target);
+              app.stage.removeChild(cards[my_card[my_match[0]]]);
+              currentPlayer++;
+              match++;
+              round();
+              show_middle_card();
+              show_my_card();
+            }
+          });
         } else {
-          cards[beginning_card[i]].x = ((window.innerWidth - 4 * cards[beginning_card[i]].width) / 14) * (i - 10) + (i - 20) * cards[beginning_card[i]].width;
-          cards[beginning_card[i]].y = window.innerHeight / 2 + 1 * cards[beginning_card[i]].height;
-          app.stage.addChild(cards[beginning_card[i]]);
+          my_card.forEach((myCard, i) => {
+            if(myCard % 13 + index % 13 === 8) {
+              my_match.push(i);
+            }
+
+            if(i === my_card.length - 1) {
+              let middleCardIndex = middle_card.indexOf(index);
+              middle_card.splice(middleCardIndex, 1, beginning_card[on_top_of_the_cards]);
+              my_card.splice(my_match[0], 1);
+              on_top_of_the_cards++;
+
+              app.stage.removeChild(event.target);
+              app.stage.removeChild(cards[my_card[my_match[0]]]);
+              currentPlayer++;
+              match++;
+              round();
+              show_middle_card();
+              show_my_card();
+            }
+          });
         }
       }
 
-      for(let i = 24; i < 28; i++) {
-        cards[beginning_card[i]].tint = 0.3 * 0xFFFFFF;
-        cards[beginning_card[i]].width = cards[beginning_card[i]].width * 0.5;
-        cards[beginning_card[i]].height = cards[beginning_card[i]].height * 0.5;
-        
-        if(i < 26) {
-          cards[beginning_card[i]].x = (window.innerWidth - 1000 - 2 * cards[beginning_card[i]].width) * (i - 24) + (i - 24) * cards[beginning_card[i]].width + 500;
-          cards[beginning_card[i]].y = window.innerHeight / 2 - cards[beginning_card[i]].height - 15;
-          app.stage.addChild(cards[beginning_card[i]]);
+      function round() {
+        if(currentPlayer === 0) {
+          draw.interactive = true;
+          draw.buttonMode = true;
+          draw.on('pointerdown', drawCard);
+
+          middle_card.forEach((middle) => {
+            cards[middle].interactive = true;
+            cards[middle].buttonMode = true;
+            cards[middle].on('pointerdown', (e) => onClick(e, middle));
+          });
         } else {
-          cards[beginning_card[i]].x = (window.innerWidth - 1000 - 2 * cards[beginning_card[i]].width) * (i - 26) + (i - 26) * cards[beginning_card[i]].width + 500;
-          cards[beginning_card[i]].y = window.innerHeight / 2 + 15;
-          app.stage.addChild(cards[beginning_card[i]]);
+          draw.interactive = false;
+          draw.buttonMode = false;
+
+          middle_card.forEach((middle) => {
+            cards[middle].interactive = false;
+            cards[middle].buttonMode = false;
+          });
         }
       }
+
+      let currentPlayer = 0;
+      let match = 0;
+
+      round();
+
+      
+      // while(match < 26) {
+      //   round();
+      //   match++;
+      // }
+      
+      
 
     }
   </script>
