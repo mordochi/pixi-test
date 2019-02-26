@@ -8,6 +8,26 @@
 </head>
 <body>
   <script type="text/javascript">
+    let ws = new WebSocket('ws://localhost:3000');
+
+    //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
+    ws.onopen = () => {
+      console.log('open connection')
+    }
+
+    //關閉後執行的動作，指定一個 function 會在連結中斷後執行
+    ws.onclose = () => {
+      console.log('close connection')
+    }
+
+    //接收 Server 發送的訊息
+    ws.onmessage = event => {
+        console.log(event.data)
+    }
+
+
+
+
     let type = "WebGL"
     if(!PIXI.utils.isWebGLSupported()){
       type = "canvas"
@@ -21,6 +41,7 @@
     document.body.appendChild(app.view);
     
     PIXI.loader
+      .add("./img/start.jpeg")
       .add("./img/drawCard.jpeg")
       .add("./img/clover1.jpeg")
       .add("./img/clover2.jpeg")
@@ -515,6 +536,19 @@
     }
 
     function setup() {
+      let start = new PIXI.Sprite(
+        PIXI.loader.resources["./img/start.jpeg"].texture
+      );
+
+      start.width = window.innerWidth * 0.3;
+      start.height = window.innerHeight * 0.05;
+      start.x = window.innerWidth / 2 - start.width / 2;
+      start.y = window.innerHeight / 2 + 2.5 * start.height;
+      start.on('pointerdown', startGame);
+      app.stage.addChild(start);
+    }
+
+    function startGame() {
       set_card_sprites();
 
       let draw = new PIXI.Sprite(
@@ -872,15 +906,6 @@
       });
 
       round();
-
-      
-      // while(match < 26) {
-      //   round();
-      //   match++;
-      // }
-      
-      
-
     }
   </script>
 </body>

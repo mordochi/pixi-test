@@ -15,6 +15,9 @@ wss.on('connection', ws => {
   //連結時執行此 console 提示
   console.log('Client connected');
 
+  let clients = wss.clients.size
+  ws.send(`hi, there are ${clients} online.`);
+
   //當 WebSocket 的連線關閉時執行
   ws.on('close', () => {
       console.log('Close connected');
