@@ -8,6 +8,9 @@
 </head>
 <body>
   <script type="text/javascript">
+    let begin = false;
+    let playerNum;
+    let myServerIndex;
     let ws = new WebSocket('ws://localhost:3000');
 
     //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
@@ -22,7 +25,23 @@
 
     //接收 Server 發送的訊息
     ws.onmessage = event => {
-        console.log(event.data)
+      if(begin === false) {
+        if(/players*/g.test(event.data)) {
+          playerNum = Number(event.data.split(',')[0].split(':')[1]);
+          myServerIndex = Number(event.data.split(',')[1].split(':')[1]);
+          setup();
+        } else {
+          if(myServerIndex !== 0) {
+            event.data.split(',').forEach((str) => {
+              beginning_card.push(Number(str));
+            });
+          }
+          console.log(beginning_card)
+          startGame(start);
+        }
+      }
+      console.log(playerNum)
+      console.log(myServerIndex)
     }
 
 
@@ -42,6 +61,7 @@
     
     PIXI.loader
       .add("./img/start.jpeg")
+      .add("./img/wait.jpeg")
       .add("./img/drawCard.jpeg")
       .add("./img/clover1.jpeg")
       .add("./img/clover2.jpeg")
@@ -534,23 +554,60 @@
       tile13.width = window.innerWidth * 0.2;
       tile13.height = window.innerHeight * 0.08;
     }
+    
+    let start;    
 
     function setup() {
-      let start = new PIXI.Sprite(
-        PIXI.loader.resources["./img/start.jpeg"].texture
-      );
+      if(myServerIndex === 0) {
+        start = new PIXI.Sprite(
+          PIXI.loader.resources["./img/start.jpeg"].texture
+        );
 
-      start.width = window.innerWidth * 0.3;
-      start.height = window.innerHeight * 0.05;
-      start.x = window.innerWidth / 2 - start.width / 2;
-      start.y = window.innerHeight / 2 + 2.5 * start.height;
-      start.on('pointerdown', startGame);
-      app.stage.addChild(start);
+        start.width = window.innerWidth * 0.3;
+        start.height = window.innerHeight * 0.05;
+        start.x = window.innerWidth / 2 - start.width / 2;
+        start.y = window.innerHeight / 2 + 2.5 * start.height;
+        start.on('pointerdown', clickStartGame);
+        start.interactive = true;
+        start.buttonMode = true;
+        app.stage.addChild(start);
+      } else {
+        wait = new PIXI.Sprite(
+          PIXI.loader.resources["./img/wait.jpeg"].texture
+        );
+
+        wait.width = window.innerWidth * 0.3;
+        wait.height = window.innerHeight * 0.05;
+        wait.x = window.innerWidth / 2 - wait.width / 2;
+        wait.y = window.innerHeight / 2 + 2.5 * wait.height;
+        app.stage.addChild(wait);
+      }
+    }  
+
+    
+    let beginning_card = [];
+    
+    function clickStartGame() {
+      while(beginning_card.length < 52) {
+        let random = Math.floor(Math.random() * 52);
+        if(!beginning_card.includes(random)) {
+          beginning_card.push(random);
+        }  
+      }
+
+      ws.send(beginning_card);
     }
 
-    function startGame() {
+    function startGame(start) {
       set_card_sprites();
+      const cards = [clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
+      heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
+      pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
+      tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
 
+      begin = true;
+      app.stage.removeChild(start);
+      
       let draw = new PIXI.Sprite(
         PIXI.loader.resources["./img/drawCard.jpeg"].texture
       );
@@ -562,20 +619,8 @@
       draw.on('pointerdown', drawCard);
       app.stage.addChild(draw);
 
-      const cards = [clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
-      heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
-      pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
-      tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
       
-      let beginning_card = [];
 
-
-      while(beginning_card.length < 52) {
-        let random = Math.floor(Math.random() * 52);
-        if(!beginning_card.includes(random)) {
-          beginning_card.push(random);
-        }  
-      }
 
       let my_card = beginning_card.slice(0,6);
       let left_card = beginning_card.slice(6,12);
@@ -587,13 +632,14 @@
       const ORIGINAL_WIDTH = window.innerWidth * 0.2;
       const ORIGINAL_HEIGHT = window.innerHeight * 0.08;
 
-      // console.log(beginning_card)
-      // console.log(my_card)
-      // console.log(left_card)
-      // console.log(top_card)
-      // console.log(right_card)
-      // console.log(middle_card)
-      // console.log('----------')
+      console.log(beginning_card)
+      console.log(my_card)
+      console.log(left_card)
+      console.log(top_card)
+      console.log(right_card)
+      console.log(middle_card)
+      console.log('----------')
+
 
       // 自己的牌
       function show_my_card() {
@@ -764,11 +810,11 @@
       }
 
       function autoMatch() {
-        const players_cards = [left_card, top_card, right_card];
+        const players_cards = [my_card, left_card, top_card, right_card];
         let my_match = [];
         let match_middle = [];
         // console.log(players_cards[currentPlayer % 4 - 1])
-        players_cards[currentPlayer % 4 - 1].forEach((card, i) => {
+        players_cards[currentPlayer % 4].forEach((card, i) => {
           if(card % 13 > 8) {
             middle_card.forEach((middle, middle_index) => {
               if(card % 13 === middle % 13) {
@@ -789,10 +835,10 @@
             });
           }
 
-          if(i === players_cards[currentPlayer % 4 - 1].length - 1 ) {
+          if(i === players_cards[currentPlayer % 4].length - 1 ) {
             if(my_match.length !== 0) {
               app.stage.removeChild(cards[middle_card[match_middle[0]]]);
-              app.stage.removeChild(cards[players_cards[currentPlayer % 4 - 1][my_match[0]]]);
+              app.stage.removeChild(cards[players_cards[currentPlayer % 4][my_match[0]]]);
               // console.log('中間'+middle_card[match_middle[0]])
               if(on_top_of_the_cards < 52) {
                 middle_card.splice(match_middle[0], 1);
@@ -802,7 +848,7 @@
               }
               // console.log('有'+players_cards[currentPlayer % 4 - 1][my_match[0]])
               
-              players_cards[currentPlayer % 4 - 1].splice(my_match[0], 1);
+              players_cards[currentPlayer % 4].splice(my_match[0], 1);
               // console.log(players_cards[currentPlayer % 4 - 1])
               currentPlayer++;
               match++;
@@ -858,14 +904,13 @@
               // console.log(middle_card)
               // console.log('------------')
 
-
               round();
             }
           }
         });
       }
 
-      function round() {
+      function one_p_round() {
         // console.log('p:'+currentPlayer)
         // console.log(middle_card)
         show_middle_card();
@@ -898,6 +943,39 @@
         }
       }
 
+      function two_p_round() {
+        // console.log('p:'+currentPlayer)
+        // console.log(middle_card)
+        show_middle_card();
+        show_my_card();
+        show_left_card();
+        show_top_card();
+        show_right_card();
+
+        if(currentPlayer % 4 === myServerIndex && match !== 26) {
+          draw.interactive = true;
+          draw.buttonMode = true;
+
+          middle_card.forEach((middle) => {
+            cards[middle].interactive = true;
+            cards[middle].buttonMode = true;
+            //cards[middle].on('pointerdown', (e) => onClick(e, middle));
+          });
+        } else {
+          draw.interactive = false;
+          draw.buttonMode = false;
+
+          middle_card.forEach((middle) => {
+            cards[middle].interactive = false;
+            cards[middle].buttonMode = false;
+          });
+
+          if(match !== 26) {
+            autoMatch();
+          }
+        }
+      }
+
       let currentPlayer = 0;
       let match = 0;
 
@@ -905,8 +983,24 @@
         cards[middle].on('pointerdown', (e) => onClick(e, middle));
       });
 
+
+      function round() {
+        if(playerNum === 1) {
+          one_p_round();
+        } else if(playerNum === 2) {
+          two_p_round();
+        } else if(playerNum === 3) {
+
+        } else {
+
+        }
+      }
+
       round();
-    }
+      
+
+
+    }  
   </script>
 </body>
 </html>
