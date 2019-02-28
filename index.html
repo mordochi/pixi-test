@@ -95,7 +95,6 @@
       }
 
       cards.forEach((card, i) => {
-        card.on('pointerdown', (e) => onClick(e, i));
         app.stage.removeChild(card);
       });
 
@@ -926,7 +925,7 @@
       // console.log(middle_card)
 
       if(currentPlayer % 4 === myServerIndex && match !== 26) {
-        // console.log('我')
+        console.log('我')
         draw.interactive = true;
         draw.buttonMode = true;
 
@@ -984,6 +983,10 @@
       heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
       pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
       tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
+
+      cards.forEach((card, i) => {
+        card.on('pointerdown', (e) => onClick(e, i));
+      });
 
       if(myServerIndex === 0) {
         start = new PIXI.Sprite(
