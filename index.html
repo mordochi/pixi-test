@@ -897,6 +897,16 @@
       // console.log('p:'+currentPlayer)
       // console.log(middle_card)
 
+      cards.forEach((card, i) => {
+        app.stage.removeChild(card);
+      });
+
+      show_my_card();
+      show_left_card();
+      show_top_card();
+      show_right_card();
+      show_middle_card();
+
       if(currentPlayer % 4 === 0 && match !== 26) {
         draw.interactive = true;
         draw.buttonMode = true;
