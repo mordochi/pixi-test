@@ -36,12 +36,74 @@
               beginning_card.push(Number(str));
             });
           }
-          console.log(beginning_card)
+
+          my_card = beginning_card.slice(0,6);
+          left_card = beginning_card.slice(6,12);
+          top_card = beginning_card.slice(12,18);
+          right_card = beginning_card.slice(18,24);
+          middle_card = beginning_card.slice(24,28);
+          on_top_of_the_cards = 28;
+
           startGame(start);
         }
+      } else {
+        if(/my_card*/g.test(event.data)) {
+          my_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              my_card.push(Number(str));
+            });
+          }
+        } else if(/left_card*/g.test(event.data)) {
+          left_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              left_card.push(Number(str));
+            });
+          }
+        } else if(/top_card*/g.test(event.data)) {
+          top_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              top_card.push(Number(str));
+            });
+          }
+        } else if(/right_card*/g.test(event.data)) {
+          right_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              right_card.push(Number(str));
+            });
+          }
+        } else if(/middle_card*/g.test(event.data)) {
+          middle_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              middle_card.push(Number(str));
+            });
+          }
+        } else if(/match*/g.test(event.data)) {
+          match = Number(event.data.split(':')[1]);
+        } else if(/on_top_of_the_cards*/g.test(event.data)) {
+          on_top_of_the_cards = Number(event.data.split(':')[1]);
+        } else if(/currentPlayer*/g.test(event.data)) {
+          currentPlayer = Number(event.data.split(':')[1]);
+          if(currentPlayer % 4 === myServerIndex) {
+            round();
+          }
+        } 
       }
-      console.log(playerNum)
-      console.log(myServerIndex)
+
+      cards.forEach((card, i) => {
+        card.on('pointerdown', (e) => onClick(e, i));
+        app.stage.removeChild(card);
+      });
+
+      show_my_card();
+      show_left_card();
+      show_top_card();
+      show_right_card();
+      show_middle_card();
     }
 
 
@@ -121,6 +183,22 @@
       heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
       pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
       tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13;
+    let cards = [];
+    let draw;
+
+    const ORIGINAL_WIDTH = window.innerWidth * 0.2;
+    const ORIGINAL_HEIGHT = window.innerHeight * 0.08;
+
+    function sendToServer() {
+      ws.send(`my_card:${my_card}`)
+      ws.send(`left_card:${left_card}`)
+      ws.send(`top_card:${top_card}`)
+      ws.send(`right_card:${right_card}`)
+      ws.send(`middle_card:${middle_card}`)
+      ws.send(`match:${match}`)
+      ws.send(`on_top_of_the_cards:${on_top_of_the_cards}`)
+      ws.send(`currentPlayer:${currentPlayer}`)
+    }
 
     function set_card_sprites() {
       clover1 = new PIXI.Sprite(
@@ -554,10 +632,359 @@
       tile13.width = window.innerWidth * 0.2;
       tile13.height = window.innerHeight * 0.08;
     }
-    
+
+    // 自己的牌
+    function show_my_card() {
+      my_card.forEach((card, i) => {
+        if(i < 3) {
+          cards[card].x = ((window.innerWidth - 3 * ORIGINAL_WIDTH) / 4) * (i + 1) + i * ORIGINAL_WIDTH;
+          cards[card].y = window.innerHeight - 2 * ORIGINAL_HEIGHT - 120;
+          app.stage.addChild(cards[card]);
+        } else {
+          cards[card].x = ((window.innerWidth - 3 * ORIGINAL_WIDTH) / 4) * (i - 2) + (i - 3) * ORIGINAL_WIDTH;
+          cards[card].y = window.innerHeight - ORIGINAL_HEIGHT - 60;
+          app.stage.addChild(cards[card]);
+        }
+      });
+    }
+
+    // 左邊玩家
+    function show_left_card() {
+      left_card.forEach((card, i) => {
+        cards[card].width = ORIGINAL_WIDTH * 0.5;
+        cards[card].height =  ORIGINAL_HEIGHT * 0.5;
+
+        if(i < 2) {
+          cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 1) + i * cards[card].width;
+          cards[card].y = window.innerHeight / 2 - 2 * cards[card].height;
+          app.stage.addChild(cards[card]);
+        } else if(i < 4) {
+          cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i - 1) + (i - 2) * cards[card].width;
+          cards[card].y = window.innerHeight / 2 - 0.5 * cards[card].height;
+          app.stage.addChild(cards[card]);
+        } else {
+          cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i - 3) + (i - 4) * cards[card].width;
+          cards[card].y = window.innerHeight / 2 + 1 * cards[card].height;
+          app.stage.addChild(cards[card]);
+        }
+      });
+    }      
+
+    // 上方玩家
+    function show_top_card() {
+      top_card.forEach((card, i) => {
+        cards[card].width = ORIGINAL_WIDTH * 0.5;
+        cards[card].height =  ORIGINAL_HEIGHT * 0.5;
+        
+        if(i < 3) {
+          cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * i + i * cards[card].width + 300;
+          cards[card].y = 30;
+          app.stage.addChild(cards[card]);
+        } else {
+          cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * (i - 3) + (i - 3) * cards[card].width + 300;
+          cards[card].y = cards[card].height + 30 + 30;
+          app.stage.addChild(cards[card]);
+        }
+      });
+    }
+
+    // 右邊玩家
+    function show_right_card() {
+      right_card.forEach((card, i) => {
+        cards[card].width = ORIGINAL_WIDTH * 0.5;
+        cards[card].height =  ORIGINAL_HEIGHT * 0.5;
+
+        if(i < 2) {
+          cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 12) + (i + 2) * cards[card].width;
+          cards[card].y = window.innerHeight / 2 - 2 * cards[card].height;
+          app.stage.addChild(cards[card]);
+        } else if(i < 4) {
+          cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 10) + i * cards[card].width;
+          cards[card].y = window.innerHeight / 2 - 0.5 * cards[card].height;
+          app.stage.addChild(cards[card]);
+        } else {
+          cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 8) + (i - 2) * cards[card].width;
+          cards[card].y = window.innerHeight / 2 + 1 * cards[card].height;
+          app.stage.addChild(cards[card]);
+        }
+      });
+    }
+
+    //中間翻牌
+    function show_middle_card() {
+      middle_card.forEach((card, i) => {
+        cards[card].tint = 0.3 * 0xFFFFFF;
+
+        cards[card].width = ORIGINAL_WIDTH * 0.5;
+        cards[card].height = ORIGINAL_HEIGHT * 0.5;
+
+        if(i < 2) {
+          cards[card].x = (window.innerWidth - 1000 - 2 * cards[card].width) * i + i * cards[card].width + 500;
+          cards[card].y = window.innerHeight / 2 - cards[card].height - 15;
+
+          app.stage.addChild(cards[card]);
+        } else {
+          cards[card].x = (window.innerWidth - 1000 - 2 * cards[card].width) * (i - 2) + (i - 2) * cards[card].width + 500;
+          cards[card].y = window.innerHeight / 2 + 15;
+          app.stage.addChild(cards[card]);
+        }
+      });
+    }
+
+    function drawCardMatch() {
+      let middle_match = [];
+      middle_card.forEach((middle, middle_index) => {
+        if(beginning_card[on_top_of_the_cards] % 13 > 8 ) {
+          if(beginning_card[on_top_of_the_cards] % 13 === middle % 13) {
+            middle_match.push(middle_index);
+          }
+        } else {
+          if(beginning_card[on_top_of_the_cards] % 13 + middle % 13 === 8) {
+            middle_match.push(middle_index);
+          }
+        }
+
+        if(middle_index === middle_card.length - 1) {
+          if(middle_match.length !== 0) {
+            // console.log('抽中')
+            // console.log('抽'+beginning_card[on_top_of_the_cards])
+            // console.log('中'+middle_card[middle_match[0]])
+            //app.stage.removeChild(cards[middle_card[middle_match[0]]]);
+            middle_card.splice(middle_match[0], 1);
+            match++;
+            // console.log(middle_card)
+          } else {
+            if(on_top_of_the_cards < 52) {
+              const pile_top = beginning_card[on_top_of_the_cards];
+              middle_card.push(pile_top);
+            }
+          }  
+          on_top_of_the_cards++;
+          // console.log('top:'+on_top_of_the_cards)
+        }
+      });
+    }
+
+
+    function drawCard() {
+      // console.log('抽')
+      const players_cards = [my_card, left_card, top_card, right_card];
+      const last_card = players_cards[currentPlayer % 4][players_cards[currentPlayer % 4].length - 1];
+      middle_card.push(last_card);
+      players_cards[currentPlayer % 4].pop();
+      drawCardMatch();
+      // console.log(players_cards[currentPlayer % 4])
+      currentPlayer++;
+      
+      // console.log('match:'+match);
+      
+      // console.log(middle_card)
+      // console.log('------------')
+
+      if(playerNum !== 1) {
+        sendToServer();
+      }
+      round();
+    }
+
+    function autoMatch() {
+      const players_cards = [my_card, left_card, top_card, right_card];
+      let my_match = [];
+      let match_middle = [];
+      // console.log(players_cards[currentPlayer % 4])
+      players_cards[currentPlayer % 4].forEach((card, i) => {
+        if(card % 13 > 8) {
+          middle_card.forEach((middle, middle_index) => {
+            if(card % 13 === middle % 13) {
+              if(!my_match.includes(i)) {
+                my_match.push(i);
+                match_middle.push(middle_index);
+              } 
+            }
+          });
+        } else {
+          middle_card.forEach((middle, middle_index) => {
+            if(card % 13 + middle % 13 === 8) {
+              if(!my_match.includes(i)) {
+                my_match.push(i);
+                match_middle.push(middle_index);
+              } 
+            }
+          });
+        }
+
+        if(i === players_cards[currentPlayer % 4].length - 1 ) {
+          if(my_match.length !== 0) {
+            //app.stage.removeChild(cards[middle_card[match_middle[0]]]);
+            //app.stage.removeChild(cards[players_cards[currentPlayer % 4][my_match[0]]]);
+            // console.log('中間'+middle_card[match_middle[0]])
+            if(on_top_of_the_cards < 52) {
+              middle_card.splice(match_middle[0], 1);
+              drawCardMatch(); 
+            } else {
+              middle_card.splice(match_middle[0], 1);
+            }
+            // console.log('有'+players_cards[currentPlayer % 4][my_match[0]])
+            
+            players_cards[currentPlayer % 4].splice(my_match[0], 1);
+            // console.log(players_cards[currentPlayer % 4])
+            currentPlayer++;
+            match++;
+
+            // console.log('match:'+match);
+            
+            // console.log(middle_card)
+            // console.log('------------')
+
+            if(playerNum !== 1) {
+              sendToServer();
+            }
+            round();
+          } else {
+            drawCard();
+          }
+        } 
+      });
+    }
+
+    function onClick (event, index) {
+      // console.log(my_card)
+      const players_cards = [my_card, left_card, top_card, right_card];
+      let my_match = [];
+      players_cards[currentPlayer % 4].forEach((myCard, i) => {
+        if(index % 13 > 8) {
+          if(myCard % 13 === index % 13) {
+            my_match.push(i);
+          }
+        } else {
+          if(myCard % 13 + index % 13 === 8) {
+            my_match.push(i);
+          }
+        }
+
+        if(i === players_cards[currentPlayer % 4].length - 1) {
+          if(my_match.length !== 0) {
+            //app.stage.removeChild(event.target);
+            //app.stage.removeChild(cards[my_card[my_match[0]]]);
+
+            let middleCardIndex = middle_card.indexOf(index);
+
+            if(on_top_of_the_cards < 52) {
+              middle_card.splice(middleCardIndex, 1);
+              drawCardMatch();      
+            } else {
+              middle_card.splice(middleCardIndex, 1);
+            }
+            players_cards[currentPlayer % 4].splice(my_match[0], 1);
+
+            currentPlayer++;
+            match++;
+
+            // console.log('match:'+match);
+            // console.log(my_card)
+            // console.log(middle_card)
+            // console.log('------------')
+
+            if(playerNum !== 1) {
+              sendToServer();
+            }
+            round();
+          }
+        }
+      });
+    }
+
+    function one_p_round() {
+      // console.log('p:'+currentPlayer)
+      // console.log(middle_card)
+
+      if(currentPlayer % 4 === 0 && match !== 26) {
+        draw.interactive = true;
+        draw.buttonMode = true;
+
+        middle_card.forEach((middle) => {
+          cards[middle].interactive = true;
+          cards[middle].buttonMode = true;
+        });
+      } else {
+        draw.interactive = false;
+        draw.buttonMode = false;
+
+        middle_card.forEach((middle) => {
+          cards[middle].interactive = false;
+          cards[middle].buttonMode = false;
+        });
+
+        if(match !== 26) {
+          autoMatch();
+        }
+      }
+    }
+
+    function two_p_round() {
+      // console.log('p:'+currentPlayer)
+      // console.log(middle_card)
+
+      if(currentPlayer % 4 === myServerIndex && match !== 26) {
+        // console.log('我')
+        draw.interactive = true;
+        draw.buttonMode = true;
+
+        middle_card.forEach((middle, i) => {
+          cards[middle].interactive = true;
+          cards[middle].buttonMode = true;
+        });
+      } else {
+        draw.interactive = false;
+        draw.buttonMode = false;
+
+        middle_card.forEach((middle) => {
+          cards[middle].interactive = false;
+          cards[middle].buttonMode = false;
+        });
+
+        if(currentPlayer % 4 >= playerNum && match !== 26) {
+          autoMatch();
+        }
+      }
+    }
+
+    function round() {
+      console.log(playerNum)
+      console.log(myServerIndex)
+      console.log(beginning_card)
+      console.log(my_card)
+      console.log(left_card)
+      console.log(top_card)
+      console.log(right_card)
+      console.log(middle_card)
+      console.log(match)
+      console.log(on_top_of_the_cards)
+      console.log(currentPlayer)
+      console.log('----------')
+
+      if(playerNum === 1) {
+        one_p_round();
+      } else if(playerNum === 2) {
+        two_p_round();
+      } else if(playerNum === 3) {
+
+      } else {
+
+      }
+    }
+
+
     let start;    
 
     function setup() {
+      set_card_sprites();
+
+      cards = [clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
+      heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
+      pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
+      tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
+
       if(myServerIndex === 0) {
         start = new PIXI.Sprite(
           PIXI.loader.resources["./img/start.jpeg"].texture
@@ -586,6 +1013,15 @@
 
     
     let beginning_card = [];
+    let my_card = [];
+    let left_card = [];
+    let top_card = [];
+    let right_card = [];
+    let middle_card = [];
+    let on_top_of_the_cards = 28;
+
+    let currentPlayer = 0;
+    let match = 0;
     
     function clickStartGame() {
       while(beginning_card.length < 52) {
@@ -599,16 +1035,10 @@
     }
 
     function startGame(start) {
-      set_card_sprites();
-      const cards = [clover1, clover2, clover3, clover4, clover5, clover6, clover7, clover8, clover9, clover10, clover11, clover12, clover13,
-      heart1, heart2, heart3, heart4, heart5, heart6, heart7, heart8, heart9, heart10, heart11, heart12, heart13,
-      pike1, pike2, pike3, pike4, pike5, pike6, pike7, pike8, pike9, pike10, pike11, pike12, pike13,
-      tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13];
-
       begin = true;
       app.stage.removeChild(start);
       
-      let draw = new PIXI.Sprite(
+      draw = new PIXI.Sprite(
         PIXI.loader.resources["./img/drawCard.jpeg"].texture
       );
 
@@ -619,382 +1049,16 @@
       draw.on('pointerdown', drawCard);
       app.stage.addChild(draw);
 
+
+      // console.log(beginning_card)
+      // console.log(my_card)
+      // console.log(left_card)
+      // console.log(top_card)
+      // console.log(right_card)
+      // console.log(middle_card)
+      // console.log('----------')
+
       
-
-
-      let my_card = beginning_card.slice(0,6);
-      let left_card = beginning_card.slice(6,12);
-      let top_card = beginning_card.slice(12,18);
-      let right_card = beginning_card.slice(18,24);
-      let middle_card = beginning_card.slice(24,28);
-      let on_top_of_the_cards = 28;
-
-      const ORIGINAL_WIDTH = window.innerWidth * 0.2;
-      const ORIGINAL_HEIGHT = window.innerHeight * 0.08;
-
-      console.log(beginning_card)
-      console.log(my_card)
-      console.log(left_card)
-      console.log(top_card)
-      console.log(right_card)
-      console.log(middle_card)
-      console.log('----------')
-
-
-      // 自己的牌
-      function show_my_card() {
-        my_card.forEach((card, i) => {
-          if(i < 3) {
-            cards[card].x = ((window.innerWidth - 3 * ORIGINAL_WIDTH) / 4) * (i + 1) + i * ORIGINAL_WIDTH;
-            cards[card].y = window.innerHeight - 2 * ORIGINAL_HEIGHT - 120;
-            app.stage.addChild(cards[card]);
-          } else {
-            cards[card].x = ((window.innerWidth - 3 * ORIGINAL_WIDTH) / 4) * (i - 2) + (i - 3) * ORIGINAL_WIDTH;
-            cards[card].y = window.innerHeight - ORIGINAL_HEIGHT - 60;
-            app.stage.addChild(cards[card]);
-          }
-        });
-      }
-
-      show_my_card();
-
-
-      // 左邊玩家
-      function show_left_card() {
-        left_card.forEach((card, i) => {
-          cards[card].width = ORIGINAL_WIDTH * 0.5;
-          cards[card].height =  ORIGINAL_HEIGHT * 0.5;
-
-          if(i < 2) {
-            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 1) + i * cards[card].width;
-            cards[card].y = window.innerHeight / 2 - 2 * cards[card].height;
-            app.stage.addChild(cards[card]);
-          } else if(i < 4) {
-            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i - 1) + (i - 2) * cards[card].width;
-            cards[card].y = window.innerHeight / 2 - 0.5 * cards[card].height;
-            app.stage.addChild(cards[card]);
-          } else {
-            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i - 3) + (i - 4) * cards[card].width;
-            cards[card].y = window.innerHeight / 2 + 1 * cards[card].height;
-            app.stage.addChild(cards[card]);
-          }
-        });
-      }
-
-      show_left_card();
-      
-
-      // 上方玩家
-      function show_top_card() {
-        top_card.forEach((card, i) => {
-          cards[card].width = ORIGINAL_WIDTH * 0.5;
-          cards[card].height =  ORIGINAL_HEIGHT * 0.5;
-          
-          if(i < 3) {
-            cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * i + i * cards[card].width + 300;
-            cards[card].y = 30;
-            app.stage.addChild(cards[card]);
-          } else {
-            cards[card].x = ((window.innerWidth - 600 - 3 * cards[card].width) / 2) * (i - 3) + (i - 3) * cards[card].width + 300;
-            cards[card].y = cards[card].height + 30 + 30;
-            app.stage.addChild(cards[card]);
-          }
-        });
-      }
-
-      show_top_card();
-
-
-      // 右邊玩家
-      function show_right_card() {
-        right_card.forEach((card, i) => {
-          cards[card].width = ORIGINAL_WIDTH * 0.5;
-          cards[card].height =  ORIGINAL_HEIGHT * 0.5;
-
-          if(i < 2) {
-            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 12) + (i + 2) * cards[card].width;
-            cards[card].y = window.innerHeight / 2 - 2 * cards[card].height;
-            app.stage.addChild(cards[card]);
-          } else if(i < 4) {
-            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 10) + i * cards[card].width;
-            cards[card].y = window.innerHeight / 2 - 0.5 * cards[card].height;
-            app.stage.addChild(cards[card]);
-          } else {
-            cards[card].x = ((window.innerWidth - 4 * cards[card].width) / 14) * (i + 8) + (i - 2) * cards[card].width;
-            cards[card].y = window.innerHeight / 2 + 1 * cards[card].height;
-            app.stage.addChild(cards[card]);
-          }
-        });
-      }
-
-      show_right_card();
-
-
-      //中間翻牌
-      function show_middle_card() {
-        middle_card.forEach((card, i) => {
-          cards[card].tint = 0.3 * 0xFFFFFF;
-
-          cards[card].width = ORIGINAL_WIDTH * 0.5;
-          cards[card].height = ORIGINAL_HEIGHT * 0.5;
-
-          if(i < 2) {
-            cards[card].x = (window.innerWidth - 1000 - 2 * cards[card].width) * i + i * cards[card].width + 500;
-            cards[card].y = window.innerHeight / 2 - cards[card].height - 15;
-
-            app.stage.addChild(cards[card]);
-          } else {
-            cards[card].x = (window.innerWidth - 1000 - 2 * cards[card].width) * (i - 2) + (i - 2) * cards[card].width + 500;
-            cards[card].y = window.innerHeight / 2 + 15;
-            app.stage.addChild(cards[card]);
-          }
-        });
-      }
-
-      show_middle_card();
-
-
-      function drawCardMatch() {
-        let middle_match = [];
-        middle_card.forEach((middle, middle_index) => {
-          if(beginning_card[on_top_of_the_cards] % 13 > 8 ) {
-            if(beginning_card[on_top_of_the_cards] % 13 === middle % 13) {
-              middle_match.push(middle_index);
-            }
-          } else {
-            if(beginning_card[on_top_of_the_cards] % 13 + middle % 13 === 8) {
-              middle_match.push(middle_index);
-            }
-          }
-
-          if(middle_index === middle_card.length - 1) {
-            if(middle_match.length !== 0) {
-              // console.log('抽中')
-              // console.log('抽'+beginning_card[on_top_of_the_cards])
-              // console.log('中'+middle_card[middle_match[0]])
-              app.stage.removeChild(cards[middle_card[middle_match[0]]]);
-              middle_card.splice(middle_match[0], 1);
-              match++;
-              // console.log(middle_card)
-            } else {
-              if(on_top_of_the_cards < 52) {
-                const pile_top = beginning_card[on_top_of_the_cards];
-                cards[pile_top].on('pointerdown', (e) => onClick(e, pile_top));
-                middle_card.push(pile_top);
-              }
-            }  
-            on_top_of_the_cards++;
-            // console.log('top:'+on_top_of_the_cards)
-          }
-        });
-      }
-
-
-      function drawCard() {
-        // console.log('抽')
-        const players_cards = [my_card, left_card, top_card, right_card];
-        const last_card = players_cards[currentPlayer % 4][players_cards[currentPlayer % 4].length - 1];
-        cards[last_card].on('pointerdown', (e) => onClick(e, last_card));
-        middle_card.push(last_card);
-        players_cards[currentPlayer % 4].pop();
-        drawCardMatch();
-        // console.log(players_cards[currentPlayer % 4])
-        currentPlayer++;
-        
-        // console.log('match:'+match);
-        
-        // console.log(middle_card)
-        // console.log('------------')
-
-        round();
-      }
-
-      function autoMatch() {
-        const players_cards = [my_card, left_card, top_card, right_card];
-        let my_match = [];
-        let match_middle = [];
-        // console.log(players_cards[currentPlayer % 4 - 1])
-        players_cards[currentPlayer % 4].forEach((card, i) => {
-          if(card % 13 > 8) {
-            middle_card.forEach((middle, middle_index) => {
-              if(card % 13 === middle % 13) {
-                if(!my_match.includes(i)) {
-                  my_match.push(i);
-                  match_middle.push(middle_index);
-                } 
-              }
-            });
-          } else {
-            middle_card.forEach((middle, middle_index) => {
-              if(card % 13 + middle % 13 === 8) {
-                if(!my_match.includes(i)) {
-                  my_match.push(i);
-                  match_middle.push(middle_index);
-                } 
-              }
-            });
-          }
-
-          if(i === players_cards[currentPlayer % 4].length - 1 ) {
-            if(my_match.length !== 0) {
-              app.stage.removeChild(cards[middle_card[match_middle[0]]]);
-              app.stage.removeChild(cards[players_cards[currentPlayer % 4][my_match[0]]]);
-              // console.log('中間'+middle_card[match_middle[0]])
-              if(on_top_of_the_cards < 52) {
-                middle_card.splice(match_middle[0], 1);
-                drawCardMatch(); 
-              } else {
-                middle_card.splice(match_middle[0], 1);
-              }
-              // console.log('有'+players_cards[currentPlayer % 4 - 1][my_match[0]])
-              
-              players_cards[currentPlayer % 4].splice(my_match[0], 1);
-              // console.log(players_cards[currentPlayer % 4 - 1])
-              currentPlayer++;
-              match++;
-
-              // console.log('match:'+match);
-              
-              // console.log(middle_card)
-              // console.log('------------')
-
-
-              round();
-            } else {
-              drawCard();
-            }
-          } 
-        });
-      }
-
-
-      function onClick (event, index) {
-        // console.log(my_card)
-        let my_match = [];
-        my_card.forEach((myCard, i) => {
-          if(index % 13 > 8) {
-            if(myCard % 13 === index % 13) {
-              my_match.push(i);
-            }
-          } else {
-            if(myCard % 13 + index % 13 === 8) {
-              my_match.push(i);
-            }
-          }
-
-          if(i === my_card.length - 1) {
-            if(my_match.length !== 0) {
-              app.stage.removeChild(event.target);
-              app.stage.removeChild(cards[my_card[my_match[0]]]);
-
-              let middleCardIndex = middle_card.indexOf(index);
-              if(on_top_of_the_cards < 52) {
-                middle_card.splice(middleCardIndex, 1);
-                drawCardMatch();      
-              } else {
-                middle_card.splice(middleCardIndex, 1);
-              }
-              my_card.splice(my_match[0], 1);
-
-              currentPlayer++;
-              match++;
-
-              // console.log('match:'+match);
-              // console.log(my_card)
-              // console.log(middle_card)
-              // console.log('------------')
-
-              round();
-            }
-          }
-        });
-      }
-
-      function one_p_round() {
-        // console.log('p:'+currentPlayer)
-        // console.log(middle_card)
-        show_middle_card();
-        show_my_card();
-        show_left_card();
-        show_top_card();
-        show_right_card();
-
-        if(currentPlayer % 4 === 0 && match !== 26) {
-          draw.interactive = true;
-          draw.buttonMode = true;
-
-          middle_card.forEach((middle) => {
-            cards[middle].interactive = true;
-            cards[middle].buttonMode = true;
-            //cards[middle].on('pointerdown', (e) => onClick(e, middle));
-          });
-        } else {
-          draw.interactive = false;
-          draw.buttonMode = false;
-
-          middle_card.forEach((middle) => {
-            cards[middle].interactive = false;
-            cards[middle].buttonMode = false;
-          });
-
-          if(match !== 26) {
-            autoMatch();
-          }
-        }
-      }
-
-      function two_p_round() {
-        // console.log('p:'+currentPlayer)
-        // console.log(middle_card)
-        show_middle_card();
-        show_my_card();
-        show_left_card();
-        show_top_card();
-        show_right_card();
-
-        if(currentPlayer % 4 === myServerIndex && match !== 26) {
-          draw.interactive = true;
-          draw.buttonMode = true;
-
-          middle_card.forEach((middle) => {
-            cards[middle].interactive = true;
-            cards[middle].buttonMode = true;
-            //cards[middle].on('pointerdown', (e) => onClick(e, middle));
-          });
-        } else {
-          draw.interactive = false;
-          draw.buttonMode = false;
-
-          middle_card.forEach((middle) => {
-            cards[middle].interactive = false;
-            cards[middle].buttonMode = false;
-          });
-
-          if(match !== 26) {
-            autoMatch();
-          }
-        }
-      }
-
-      let currentPlayer = 0;
-      let match = 0;
-
-      middle_card.forEach((middle) => {
-        cards[middle].on('pointerdown', (e) => onClick(e, middle));
-      });
-
-
-      function round() {
-        if(playerNum === 1) {
-          one_p_round();
-        } else if(playerNum === 2) {
-          two_p_round();
-        } else if(playerNum === 3) {
-
-        } else {
-
-        }
-      }
 
       round();
       
