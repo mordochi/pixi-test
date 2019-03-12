@@ -75,6 +75,34 @@
               right_card.push(Number(str));
             });
           }
+        } else if(/my_match_card*/g.test(event.data)) {
+          right_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              my_match_card.push(Number(str));
+            });
+          }
+        } else if(/left_match_card*/g.test(event.data)) {
+          left_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              left_match_card.push(Number(str));
+            });
+          }
+        } else if(/top_match_card*/g.test(event.data)) {
+          top_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              top_match_card.push(Number(str));
+            });
+          }
+        } else if(/right_match_card*/g.test(event.data)) {
+          right_card = [];
+          if(event.data.split(':')[1].length !== 0) {
+            event.data.split(':')[1].split(',').forEach((str) => {
+              right_match_card.push(Number(str));
+            });
+          }
         } else if(/middle_card*/g.test(event.data)) {
           middle_card = [];
           if(event.data.split(':')[1].length !== 0) {
@@ -193,6 +221,12 @@
       ws.send(`left_card:${left_card}`)
       ws.send(`top_card:${top_card}`)
       ws.send(`right_card:${right_card}`)
+
+      ws.send(`my_match_card:${my_match_card}`)
+      ws.send(`left_match_card:${left_match_card}`)
+      ws.send(`top_match_card:${top_match_card}`)
+      ws.send(`right_match_card:${right_match_card}`)
+
       ws.send(`middle_card:${middle_card}`)
       ws.send(`match:${match}`)
       ws.send(`on_top_of_the_cards:${on_top_of_the_cards}`)
@@ -730,7 +764,10 @@
       });
     }
 
-    function drawCardMatch() {
+    function drawCardMatch(p) {
+      const players_cards = [my_card, left_card, top_card, right_card];
+      const players_match_cards = [my_match_card, left_match_card, top_match_card, right_match_card];
+
       let middle_match = [];
       middle_card.forEach((middle, middle_index) => {
         if(beginning_card[on_top_of_the_cards] % 13 > 8 ) {
@@ -745,6 +782,8 @@
 
         if(middle_index === middle_card.length - 1) {
           if(middle_match.length !== 0) {
+            players_match_cards[p].push(middle_card[middle_match[0]]);
+            players_match_cards[p].push(beginning_card[on_top_of_the_cards]);
             // console.log('抽中')
             // console.log('抽'+beginning_card[on_top_of_the_cards])
             // console.log('中'+middle_card[middle_match[0]])
@@ -771,7 +810,7 @@
       const last_card = players_cards[currentPlayer % 4][players_cards[currentPlayer % 4].length - 1];
       middle_card.push(last_card);
       players_cards[currentPlayer % 4].pop();
-      drawCardMatch();
+      drawCardMatch(currentPlayer % 4);
       // console.log(players_cards[currentPlayer % 4])
       currentPlayer++;
       
@@ -788,6 +827,7 @@
 
     function autoMatch() {
       const players_cards = [my_card, left_card, top_card, right_card];
+      const players_match_cards = [my_match_card, left_match_card, top_match_card, right_match_card];
       let my_match = [];
       let match_middle = [];
       // console.log(players_cards[currentPlayer % 4])
@@ -817,9 +857,12 @@
             //app.stage.removeChild(cards[middle_card[match_middle[0]]]);
             //app.stage.removeChild(cards[players_cards[currentPlayer % 4][my_match[0]]]);
             // console.log('中間'+middle_card[match_middle[0]])
+            players_match_cards[currentPlayer % 4].push(middle_card[match_middle[0]]);
+            players_match_cards[currentPlayer % 4].push(players_cards[currentPlayer % 4][my_match[0]]);
+
             if(on_top_of_the_cards < 52) {
               middle_card.splice(match_middle[0], 1);
-              drawCardMatch(); 
+              drawCardMatch(currentPlayer % 4); 
             } else {
               middle_card.splice(match_middle[0], 1);
             }
@@ -849,6 +892,7 @@
     function onClick (event, index) {
       // console.log(my_card)
       const players_cards = [my_card, left_card, top_card, right_card];
+      const players_match_cards = [my_match_card, left_match_card, top_match_card, right_match_card];
       let my_match = [];
       players_cards[currentPlayer % 4].forEach((myCard, i) => {
         if(index % 13 > 8) {
@@ -868,9 +912,12 @@
 
             let middleCardIndex = middle_card.indexOf(index);
 
+            players_match_cards[currentPlayer % 4].push(middle_card[middleCardIndex]);
+            players_match_cards[currentPlayer % 4].push(players_cards[currentPlayer % 4][my_match[0]]);
+
             if(on_top_of_the_cards < 52) {
               middle_card.splice(middleCardIndex, 1);
-              drawCardMatch();      
+              drawCardMatch(currentPlayer % 4);      
             } else {
               middle_card.splice(middleCardIndex, 1);
             }
@@ -958,6 +1005,48 @@
       }
     }
 
+    function calculate_score() {
+      const players_match_cards = [my_match_card, left_match_card, top_match_card, right_match_card];
+      let scores = [];
+
+      players_match_cards.forEach((cards) => {
+        let heart_arr = cards.filter(i => i >= 13).filter(i => i <=25);
+        let pike_arr = cards.filter(i => i === 26);
+        let tile_arr = cards.filter(i => i >= 39).filter(i => i <= 51);
+        let effective_arr = heart_arr.concat(pike_arr, tile_arr);
+        console.log(effective_arr);
+
+        let score = 0;
+        effective_arr.forEach((index) => {
+          if(index === 26) {
+            score += 30;
+          } else if(index % 13 === 0 && index !== 26) {
+            score += 20;
+          } else if(index % 13 > 7) {
+            //9以上的計分
+            score += 10;
+          } else {
+            score += (index % 13 + 1);
+          }
+        });
+
+        scores.push(score);
+      }); 
+      console.log(scores)
+      let style = new PIXI.TextStyle({
+        fontSize: 62,
+        fill: '#ffffff',
+        wordWrap: true,
+        wordWrapWidth: 200
+      });
+      
+      let basicText = new PIXI.Text(`得分 下方玩家：${scores[0]} 左方玩家：${scores[1]} 上方玩家：${scores[2]} 右方玩家：${scores[3]}`, style);
+      basicText.x = window.innerWidth / 2 - basicText.width / 2;
+      basicText.y = 300;
+
+      app.stage.addChild(basicText);
+    }
+
     function round() {
       console.log(playerNum)
       console.log(myServerIndex)
@@ -966,11 +1055,21 @@
       console.log(left_card)
       console.log(top_card)
       console.log(right_card)
+
+      console.log(my_match_card)
+      console.log(left_match_card)
+      console.log(top_match_card)
+      console.log(right_match_card)
+
       console.log(middle_card)
       console.log(match)
       console.log(on_top_of_the_cards)
       console.log(currentPlayer)
       console.log('----------')
+      
+      if(match === 26) {
+        calculate_score();
+      }
 
       if(playerNum === 1) {
         one_p_round();
@@ -1031,8 +1130,13 @@
     let top_card = [];
     let right_card = [];
     let middle_card = [];
-    let on_top_of_the_cards = 28;
 
+    let my_match_card = [];
+    let left_match_card = [];
+    let top_match_card = [];
+    let right_match_card = [];
+    
+    let on_top_of_the_cards = 28;
     let currentPlayer = 0;
     let match = 0;
     
