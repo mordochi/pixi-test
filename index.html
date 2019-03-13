@@ -889,55 +889,116 @@
       });
     }
 
-    function onClick (event, index) {
-      // console.log(my_card)
+    function chooseMatch(event, m_index, choose_index) {
       const players_cards = [my_card, left_card, top_card, right_card];
       const players_match_cards = [my_match_card, left_match_card, top_match_card, right_match_card];
-      let my_match = [];
-      players_cards[currentPlayer % 4].forEach((myCard, i) => {
-        if(index % 13 > 8) {
-          if(myCard % 13 === index % 13) {
-            my_match.push(i);
-          }
-        } else {
-          if(myCard % 13 + index % 13 === 8) {
-            my_match.push(i);
-          }
-        }
 
-        if(i === players_cards[currentPlayer % 4].length - 1) {
-          if(my_match.length !== 0) {
-            //app.stage.removeChild(event.target);
-            //app.stage.removeChild(cards[my_card[my_match[0]]]);
+      app.stage.removeChild(infoText);
 
-            let middleCardIndex = middle_card.indexOf(index);
+      players_cards[currentPlayer % 4].forEach((card) => {
+        cards[card].interactive = true;
+        cards[card].buttonMode = true;
+        cards[card].tint = 0xFFFFFF;
+      })
 
-            players_match_cards[currentPlayer % 4].push(middle_card[middleCardIndex]);
-            players_match_cards[currentPlayer % 4].push(players_cards[currentPlayer % 4][my_match[0]]);
+      let middleCardIndex = middle_card.indexOf(m_index);
+      let playersCardIndex = players_cards[currentPlayer % 4].indexOf(choose_index);
 
-            if(on_top_of_the_cards < 52) {
-              middle_card.splice(middleCardIndex, 1);
-              drawCardMatch(currentPlayer % 4);      
-            } else {
-              middle_card.splice(middleCardIndex, 1);
+      players_match_cards[currentPlayer % 4].push(m_index);
+      players_match_cards[currentPlayer % 4].push(choose_index);
+
+      if(on_top_of_the_cards < 52) {
+        middle_card.splice(middleCardIndex, 1);
+        drawCardMatch(currentPlayer % 4);      
+      } else {
+        middle_card.splice(middleCardIndex, 1);
+      }
+      players_cards[currentPlayer % 4].splice(playersCardIndex, 1);
+
+      currentPlayer++;
+      match++;
+
+      // console.log('match:'+match);
+      // console.log(my_card)
+      // console.log(middle_card)
+      // console.log('------------')
+
+      if(playerNum !== 1) {
+        sendToServer();
+      }
+      round();
+    }
+
+    function onClick (event, index) {
+      // console.log(my_card)
+      if(middle_card.includes(index)) {
+        const players_cards = [my_card, left_card, top_card, right_card];
+        const players_match_cards = [my_match_card, left_match_card, top_match_card, right_match_card];
+        let my_match = [];
+        players_cards[currentPlayer % 4].forEach((myCard, i) => {
+          if(index % 13 > 8) {
+            if(myCard % 13 === index % 13) {
+              my_match.push(i);
             }
-            players_cards[currentPlayer % 4].splice(my_match[0], 1);
-
-            currentPlayer++;
-            match++;
-
-            // console.log('match:'+match);
-            // console.log(my_card)
-            // console.log(middle_card)
-            // console.log('------------')
-
-            if(playerNum !== 1) {
-              sendToServer();
+          } else {
+            if(myCard % 13 + index % 13 === 8) {
+              my_match.push(i);
             }
-            round();
           }
-        }
-      });
+
+          if(i === players_cards[currentPlayer % 4].length - 1) {
+            if(my_match.length !== 0) {
+              if(my_match.length >= 2) {
+                let style = new PIXI.TextStyle({
+                  fontSize: 50,
+                  fill: '#ffffff',
+                  wordWrap: true,
+                  wordWrapWidth: 200
+                });
+                
+                infoText = new PIXI.Text(`請選擇欲配對之手牌`, style);
+                infoText.x = window.innerWidth / 2 - infoText.width / 2;
+                infoText.y = window.innerHeight / 2 + 3.5 * draw.height + 30;
+
+                app.stage.addChild(infoText);
+
+                my_match.forEach((m) => {
+                  cards[players_cards[currentPlayer % 4][m]].interactive = true;
+                  cards[players_cards[currentPlayer % 4][m]].buttonMode = true;
+                  cards[players_cards[currentPlayer % 4][m]].on('pointerdown', (e) => chooseMatch(e, index, players_cards[currentPlayer % 4][m]));
+                  cards[players_cards[currentPlayer % 4][m]].tint = 0.99 * 0xFFFFFF;
+                });
+              } else {
+                let middleCardIndex = middle_card.indexOf(index);
+
+                players_match_cards[currentPlayer % 4].push(middle_card[middleCardIndex]);
+                players_match_cards[currentPlayer % 4].push(players_cards[currentPlayer % 4][my_match[0]]);
+
+                if(on_top_of_the_cards < 52) {
+                  middle_card.splice(middleCardIndex, 1);
+                  drawCardMatch(currentPlayer % 4);      
+                } else {
+                  middle_card.splice(middleCardIndex, 1);
+                }
+                players_cards[currentPlayer % 4].splice(my_match[0], 1);
+
+                currentPlayer++;
+                match++;
+
+                // console.log('match:'+match);
+                // console.log(my_card)
+                // console.log(middle_card)
+                // console.log('------------')
+
+                if(playerNum !== 1) {
+                  sendToServer();
+                }
+                round();
+              }
+            }
+          }
+        });
+      }
     }
 
     function one_p_round() {
@@ -1032,7 +1093,7 @@
 
         scores.push(score);
       }); 
-      console.log(scores)
+
       let style = new PIXI.TextStyle({
         fontSize: 62,
         fill: '#ffffff',
@@ -1139,6 +1200,8 @@
     let on_top_of_the_cards = 28;
     let currentPlayer = 0;
     let match = 0;
+
+    let infoText;
     
     function clickStartGame() {
       while(beginning_card.length < 52) {
@@ -1174,8 +1237,6 @@
       // console.log(right_card)
       // console.log(middle_card)
       // console.log('----------')
-
-      
 
       round();
       
