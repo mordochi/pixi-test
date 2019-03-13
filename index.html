@@ -76,28 +76,28 @@
             });
           }
         } else if(/my_match_card*/g.test(event.data)) {
-          right_card = [];
+          my_match_card = [];
           if(event.data.split(':')[1].length !== 0) {
             event.data.split(':')[1].split(',').forEach((str) => {
               my_match_card.push(Number(str));
             });
           }
         } else if(/left_match_card*/g.test(event.data)) {
-          left_card = [];
+          left_match_card = [];
           if(event.data.split(':')[1].length !== 0) {
             event.data.split(':')[1].split(',').forEach((str) => {
               left_match_card.push(Number(str));
             });
           }
         } else if(/top_match_card*/g.test(event.data)) {
-          top_card = [];
+          top_match_card = [];
           if(event.data.split(':')[1].length !== 0) {
             event.data.split(':')[1].split(',').forEach((str) => {
               top_match_card.push(Number(str));
             });
           }
         } else if(/right_match_card*/g.test(event.data)) {
-          right_card = [];
+          right_match_card = [];
           if(event.data.split(':')[1].length !== 0) {
             event.data.split(':')[1].split(',').forEach((str) => {
               right_match_card.push(Number(str));
